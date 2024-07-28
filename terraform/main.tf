@@ -19,11 +19,11 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_lambda_function" "status_codes_function" {
-  filename         = "lambdaFunction.zip"
-  function_name    = "statusCodesFunction"
+  filename         = "./src/functions/lambdaFunction.zip"
+  function_name    = "statusCodeHandler"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "lambda_function.statusCodeHandler"
-  source_code_hash = filebase64sha256("lambdaFunction.zip")
+  handler          = "handler.statusCodeHandler"
+  source_code_hash = filebase64sha256("./src/functions/lambdaFunction.zip")
   runtime          = "python3.9"
 }
 
@@ -71,7 +71,7 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
   }
   throttle_settings {
     rate_limit = 3
-    burst_limit = 5
+    burst_limit = 180
   }
 }
 
@@ -81,9 +81,9 @@ resource "aws_api_gateway_api_key" "api_key" {
 }
 
 resource "aws_api_gateway_usage_plan_key" "usage_plan_key" {
-  key_id = aws_api_gateway_api_key.id
+  key_id = aws_api_gateway_api_key.api_key.id
   key_type = "API_KEY"
-  usage_plan_id = aws_api_gateway_usage_plan.id
+  usage_plan_id = aws_api_gateway_usage_plan.usage_plan.id
 }
 
 resource "aws_cloudwatch_metric_alarm" "_5xx_alarm" {
