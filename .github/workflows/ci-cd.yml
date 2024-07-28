@@ -42,7 +42,7 @@ jobs:
         sudo apt-get update && sudo apt-get install terraform
 
     - name: Zip Lambda function
-      run: zip lambda_function.zip lambda_function.py
+      run: zip lambda_function.zip src/functions/getStatusCode/handler.py
 
     - name: Terraform Init
       run: terraform init
