@@ -86,7 +86,7 @@ resource "aws_api_gateway_usage_plan_key" "usage_plan_key" {
   usage_plan_id = aws_api_gateway_usage_plan.id
 }
 
-resource "aws_cloudwatch_metric_alarm" "5xx_alarm" {
+resource "aws_cloudwatch_metric_alarm" "_5xx_alarm" {
   alarm_name          = "5xxErrorAlarm"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
