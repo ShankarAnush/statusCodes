@@ -23,14 +23,12 @@ jobs:
     
     - name: Install Dependencies
       run: |
-        python -m venv .venv
-        source .venv/bin/activate
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest
 
     - name: Run unit tests
       run: |
-        pytest tests/unit
+        python -m pytest tests/unit
 
     - name: Install AWS CLI
       run: |
