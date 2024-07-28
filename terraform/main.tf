@@ -18,12 +18,18 @@ resource "aws_iam_role" "lambda_role" {
   ]
 }
 
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../src/functions/getStatusCode"
+  output_path = "${path.module}/../src/functions/getStatusCode/lambdaFunction.zip"
+}
+
 resource "aws_lambda_function" "status_codes_function" {
-  filename         = "~/src/functions/lambdaFunction.zip"
+  filename         = data.archive_file.lambda_zip.output_path
   function_name    = "statusCodeHandler"
   role             = aws_iam_role.lambda_role.arn
   handler          = "handler.statusCodeHandler"
-  source_code_hash = filebase64sha256("~/src/functions/lambdaFunction.zip")
+  source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   runtime          = "python3.9"
 }
 
