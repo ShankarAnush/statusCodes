@@ -26,6 +26,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src/functions:$(pwd)/src/libs" >> $GITHUB_ENV
+
     - name: Run unit tests
       run: |
         python -m pytest tests/unit/
@@ -45,8 +48,8 @@ jobs:
     
     - name: Zip Lambda function
       run: |
-        cd src/functions/getStatusCode
-        zip lambdaFunction.zip handler.py
+        cd src/functions
+        zip lambdaFunction.zip getStatusCode.py
 
     - name: Terraform Init
       run: terraform init

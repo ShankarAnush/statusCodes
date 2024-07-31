@@ -1,4 +1,4 @@
-from src.functions.getStatusCode.handler import statusCodeHandler
+from src.functions.getStatusCode import statusCodeHandler
 
 def testLambdaHandler():
     response = statusCodeHandler({}, {})
