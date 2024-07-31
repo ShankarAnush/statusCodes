@@ -1,3 +1,4 @@
+import pytest
 from src.functions.getStatusCode import statusCodeHandler
 
 def testLambdaHandler():
