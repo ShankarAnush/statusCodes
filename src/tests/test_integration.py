@@ -18,7 +18,9 @@ def test_integration():
             InvocationType='RequestResponse',
         )
         payload = json.loads(response['Payload'].read())
+        status_code = payload.get('statusCode')
+        print(f"Payload returned: {status_code}")
         expected_status_codes = {200, 300, 400, 500, 501, 503, 507}
-        print(payload)
+        assert status_code in expected_status_codes, f"Unexpected payload: {status_code}"
     except ClientError as e:
         pytest.fail(f"Lambda invocation failed: {e}")
