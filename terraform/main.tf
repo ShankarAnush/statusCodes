@@ -18,11 +18,11 @@ resource "aws_iam_role" "lambda_role" {
   ]
 }
 
-resource "archive_file" "lambda_zip" {
+data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/../src"
+  source_dir  = "${path.module}/.."
   output_path = "${path.module}/lambdaFunction.zip"
-  includes    = ["src/*"]
+  excludes    = ["terraform/", "requirements.txt", ".github/", "README.md"]
 }
 
 resource "aws_lambda_function" "status_codes_function" {
