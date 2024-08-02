@@ -5,5 +5,5 @@ output "api_url" {
 output "api_key_value" {
   value       = aws_api_gateway_api_key.api_key.value
   description = "API key for accessing the Status Codes API"
-  #sensitive   = true
+  sensitive   = true
 }
