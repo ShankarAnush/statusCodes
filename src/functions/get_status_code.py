@@ -3,7 +3,7 @@ import json
 import libs.common as lib
 
 
-def status_code_handler():
+def status_code_handler(event, context):  # pylint: disable=unused-argument
     """Function returns a random status code."""
     random_status_code = lib.get_random_status_code()
     return {
