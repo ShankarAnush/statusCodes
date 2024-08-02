@@ -69,25 +69,16 @@ jobs:
         echo "::set-output name=api_url::$(terraform output -raw api_url)"
       working-directory: ${{ github.workspace }}/terraform
 
+    - name: Install GitHub CLI
+      run: sudo apt-get install -y gh
+
+    - name: Authenticate GitHub CLI
+      run: gh auth login --with-token <<< "${{ secrets.PA_TOKEN }}"
+
     - name: Store API Key and URL in GitHub Secrets
-      uses: actions/github-script@v3
-      with:
-        github-token: ${{ secrets.PA_TOKEN }}
-        script: |
-          const apiKey = '${{ steps.extract_outputs.outputs.api_key }}';
-          const apiUrl = '${{ steps.extract_outputs.outputs.api_url }}';
-          await github.actions.createOrUpdateRepoSecret({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            secret_name: 'API_KEY',
-            secret_value: apiKey
-          });
-          await github.actions.createOrUpdateRepoSecret({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            secret_name: 'API_URL',
-            secret_value: apiUrl
-          });
+      run: |
+        gh secret set API_KEY -b"${{ steps.extract_outputs.outputs.api_key }}"
+        gh secret set API_URL -b"${{ steps.extract_outputs.outputs.api_url }}"
 
     - name: Run unit and integration tests
       env:
