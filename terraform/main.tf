@@ -83,6 +83,7 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
 
 resource "aws_api_gateway_api_key" "api_key" {
   name = "APIKey"
+  description = "API key for the Status Codes API"
   enabled = true
 }
 

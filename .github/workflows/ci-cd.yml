@@ -1,4 +1,4 @@
-name: Status Codes API
+name: Deploy Status Codes API
 
 on:
   push:
@@ -41,8 +41,11 @@ jobs:
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
         sudo apt-get update && sudo apt-get install terraform
+
+    - name: Code quality check
+      run: pylint src
     
-    - name: Zip Lambda function
+    - name: Create lambda deployment package
       run: |
         zip -r terraform/lambdaFunction.zip src
       working-directory: ${{ github.workspace }}
@@ -59,11 +62,40 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
+    - name: Extract API Key and URL
+      id: extract_outputs
+      run: |
+        echo "::set-output name=api_key::$(terraform output -raw api_key_value)"
+        echo "::set-output name=api_url::$(terraform output -raw api_url)"
+      working-directory: ${{ github.workspace }}/terraform
+
+    - name: Store API Key and URL in GitHub Secrets
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ secrets.PA_TOKEN }}
+        script: |
+          const apiKey = '${{ steps.extract_outputs.outputs.api_key }}';
+          const apiUrl = '${{ steps.extract_outputs.outputs.api_url }}';
+          await github.actions.createOrUpdateRepoSecret({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            secret_name: 'API_KEY',
+            secret_value: apiKey
+          });
+          await github.actions.createOrUpdateRepoSecret({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            secret_name: 'API_URL',
+            secret_value: apiUrl
+          });
+
     - name: Run unit and integration tests
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
+        API_KEY: ${{ secrets.API_KEY }}
+        API_URL: ${{ secrets.API_URL }}
       run: |
         python -m pytest src/tests
 

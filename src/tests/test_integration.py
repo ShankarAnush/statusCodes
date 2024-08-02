@@ -19,9 +19,6 @@ def test_integration():
         )
         payload = json.loads(response['Payload'].read())
         status_code = payload.get('statusCode')
-        print(f"response -> {response}")
-        print(f"response[Payload] -> {response['Payload']}")
-        print(f"payload -> {payload}")
         print(f"Payload returned: {status_code}")
         expected_status_codes = {200, 300, 400, 500, 501, 503, 507}
         assert status_code in expected_status_codes, f"Unexpected payload: {status_code}"
