@@ -33,6 +33,11 @@ resource "aws_lambda_function" "status_codes_function" {
   runtime          = "python3.9"
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 resource "aws_api_gateway_rest_api" "status_codes_api" {
   name        = "statusCodesAPI"
   description = "API to return random HTTP status codes"
@@ -59,6 +64,16 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri         = aws_lambda_function.status_codes_function.invoke_arn
+}
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_lambda_permission" "apigw_invoke" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.status_codes_function.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.status_codes_api.id}/*"
 }
 
 resource "aws_api_gateway_deployment" "status_codes_api_deployment" {
