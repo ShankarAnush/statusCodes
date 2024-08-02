@@ -29,10 +29,6 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
 
-    - name: Run unit tests
-      run: |
-        python -m pytest src/tests
-
     - name: Install AWS CLI
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -62,3 +58,11 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: "us-west-2"
+
+    - name: Run unit tests
+      run: |
+        python -m pytest src/tests
+
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve
+      working-directory: ./terraform
