@@ -1,5 +1,6 @@
 output "api_url" {
-  value = "${aws_api_gateway_deployment.status_codes_api_deployment.invoke_url}/statuscode"
+  value       = "https://${aws_api_gateway_rest_api.status_codes_api.id}.execute-api.${var.region}.amazonaws.com/prod/statuscode"
+  description = "URL for accessing the Status Codes API"
 }
 
 output "api_key_value" {
