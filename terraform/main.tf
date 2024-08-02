@@ -26,9 +26,9 @@ data "archive_file" "lambda_zip" {
 
 resource "aws_lambda_function" "status_codes_function" {
   filename         = data.archive_file.lambda_zip.output_path
-  function_name    = "statusCodeHandler"
+  function_name    = "status_code_handler"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "functions.getStatusCode.statusCodeHandler"
+  handler          = "functions.get_status_code.status_code_handler"
   source_code_hash = filebase64sha256(data.archive_file.lambda_zip.output_path)
   runtime          = "python3.9"
 }

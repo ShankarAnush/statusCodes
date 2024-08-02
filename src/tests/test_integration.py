@@ -1,3 +1,4 @@
+"""Integration test module"""
 import os
 import json
 import pytest
@@ -6,6 +7,7 @@ from botocore.exceptions import ClientError
 
 
 def test_integration():
+    """integration test in an AWS SDK for Python - boto3"""
     client = boto3.client(
         'lambda',
         region_name=os.getenv('AWS_REGION'),
@@ -14,7 +16,7 @@ def test_integration():
     )
     try:
         response = client.invoke(
-            FunctionName='statusCodeHandler',
+            FunctionName='status_code_handler',
             InvocationType='RequestResponse',
         )
         payload = json.loads(response['Payload'].read())
