@@ -1,5 +1,5 @@
 import json
-import src.libs.common as lib
+import libs.common as lib
 
 
 def statusCodeHandler(event, context):

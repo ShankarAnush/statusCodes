@@ -1,5 +1,5 @@
 import pytest
-import src.functions.getStatusCode as func
+import functions.getStatusCode as func
 
 
 def testLambdaHandler():
