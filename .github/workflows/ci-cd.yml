@@ -66,7 +66,7 @@ jobs:
       id: extract_outputs
       run: |
         echo "::set-output name=api_key::$(terraform output -raw api_key_value)"
-        echo "::set-output name=api_url::$(terraform output -raw api_endpoint)"
+        echo "::set-output name=api_url::$(terraform output -raw api_url)"
       working-directory: ${{ github.workspace }}/terraform
 
     - name: Install GitHub CLI
