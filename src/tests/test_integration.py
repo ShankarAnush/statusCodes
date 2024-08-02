@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 
 
 def test_integration():
-    client = boto3.client('lambda')
+    client = boto3.client('lambda', region_name='us-west-2')
     try:
         response = client.invoke(
             FunctionName='statusCodeHandler',
