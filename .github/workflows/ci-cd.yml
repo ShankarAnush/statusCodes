@@ -44,9 +44,8 @@ jobs:
     
     - name: Zip Lambda function
       run: |
-        cd ..
         zip -r terraform/lambdaFunction.zip src
-      working-directory: ${{ github.workspace }}/terraform
+      working-directory: ${{ github.workspace }}
 
     - name: Terraform Init
       run: terraform init
