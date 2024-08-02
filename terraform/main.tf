@@ -38,6 +38,66 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+
+
+resource "aws_apigatewayv2_api" "http_api" {
+  name          = "statusCodesAPI"
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_integration" "lambda_integration" {
+  api_id             = aws_apigatewayv2_api.http_api.id
+  integration_type   = "AWS_PROXY"
+  integration_uri    = aws_lambda_function.status_codes_function.arn
+  integration_method = "POST"
+}
+
+resource "aws_apigatewayv2_route" "default_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "GET /statuscode"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
+
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.status_codes_function.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*"
+}
+
+resource "aws_cloudwatch_metric_alarm" "api_5xx_errors" {
+  alarm_name          = "API-5XX-Errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "5XXError"
+  namespace           = "AWS/ApiGateway"
+  period              = "10"
+  statistic           = "Sum"
+  threshold           = "10"
+  dimensions = {
+    ApiName = aws_apigatewayv2_api.http_api.name
+  }
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}
+
+resource "aws_sns_topic" "alerts" {
+  name = "api-alerts"
+}
+
+resource "aws_sns_topic_subscription" "email_alerts" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = "anushalva3@gmail.com"
+}
+
+
+
+
+
+
+
+
 resource "aws_api_gateway_rest_api" "status_codes_api" {
   name        = "statusCodesAPI"
   description = "API to return random HTTP status codes"
@@ -108,6 +168,10 @@ resource "aws_api_gateway_usage_plan_key" "usage_plan_key" {
   usage_plan_id = aws_api_gateway_usage_plan.usage_plan.id
 }
 
+resource "aws_sns_topic" "alerts" {
+  name = "api-alerts"
+}
+
 resource "aws_cloudwatch_metric_alarm" "_5xx_alarm" {
   alarm_name          = "5xxErrorAlarm"
   comparison_operator = "GreaterThanThreshold"
@@ -118,8 +182,14 @@ resource "aws_cloudwatch_metric_alarm" "_5xx_alarm" {
   statistic           = "Sum"
   threshold           = "10"
   actions_enabled     = true
-  alarm_actions       = []
+  alarm_actions       = [aws_sns_topic.alerts.arn]
   dimensions = {
     ApiName = aws_api_gateway_rest_api.status_codes_api.name
   }
+}
+
+resource "aws_sns_topic_subscription" "email_alerts" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = "anushalva3@gmail.com"
 }
