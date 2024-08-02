@@ -1,11 +1,12 @@
 import json
-from src.libs.common import getRandomStatusCode
+import src.libs.common as lib
+
 
 def statusCodeHandler(event, context):
-    randomStatusCode = getRandomStatusCode
+    randomStatusCode = lib.getRandomStatusCode()
     return {
-        "statusCode" : randomStatusCode,
-        "body" : json.dumps({
-            "message" : f"Random Status Code : {randomStatusCode}"
+        "statusCode": randomStatusCode,
+        "body": json.dumps({
+            "message": f"Random Status Code : {randomStatusCode}"
         })
     }
