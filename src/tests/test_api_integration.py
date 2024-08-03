@@ -2,16 +2,11 @@
 import os
 import requests
 
-API_URL = os.getenv('API_URL')
-API_KEY = os.getenv('API_KEY')
-
 
 def test_api_endpoint():
     """test the integration of api endpoint"""
-    headers = {"x-api-key": API_KEY}
-    response = requests.get(url=API_URL, headers=headers, timeout=5)
-    assert API_KEY is not None, "API_KEY environment variable not set"
-    assert API_URL is not None, "API_URL environment variable not set"
+    headers = {"x-api-key":os.getenv('API_KEY')}
+    response = requests.get(url=os.getenv('API_URL'), headers=headers, timeout=5)
 
     assert response.status_code == 200, f"Expected 200, but got {response.status_code}"
 
