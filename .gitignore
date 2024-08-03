@@ -1,0 +1,15 @@
+# Logs
+logs
+*.log
+
+# Dependency directories
+__pycache__/
+.venv/
+.serverless/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Environment files
+.env
