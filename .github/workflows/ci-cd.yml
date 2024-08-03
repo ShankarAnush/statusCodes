@@ -81,11 +81,14 @@ jobs:
         gh secret set API_URL -b"${{ steps.extract_outputs.outputs.api_url }}"
 
     - name: Run cURL test
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+        API_URL: ${{ secrets.API_URL }}
       run: |
         API_URL=${{ steps.extract_outputs.outputs.api_url }}
         API_KEY=${{ steps.extract_outputs.outputs.api_key }}
         echo "Testing API endpoint: $API_URL"
-        curl -H "x-api-key: $API_KEY" $API_URL/statuscode -i
+        curl -H "x-api-key: $API_KEY" $API_URL -i
 
     - name: Run unit and integration tests
       env:

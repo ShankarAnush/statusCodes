@@ -1,5 +1,5 @@
 output "api_url" {
-  value       = "${aws_api_gateway_rest_api.status_codes_api.execution_arn}/prod/statuscode"
+  value       = aws_api_gateway_deployment.status_codes_api_deployment.invoke_url
   description = "URL for accessing the Status Codes API"
 }
 
