@@ -13,11 +13,9 @@ An application to expose RESTful API on AWS using AWS lambda functions
 - Python 3.9
 - Terraform
 - AWS CLI
-- GitHub Actions
+- Git
 
-## Installations
+```plaintext
+Please refer the documentation for more information
 
-- boto3: AWS SDK for Python
-- pytest: To execute unit and integration tests
-- requests: Library in Python to send/receive HTTP requests/responses
 
